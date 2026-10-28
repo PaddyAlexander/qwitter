@@ -9,13 +9,24 @@
             placeholder="What's happening?"
             maxlength="280"
             bottom-slots
-            counter
             autogrow
           >
             <template v-slot:before>
               <q-avatar size="xl">
                 <img src="https://s.gravatar.com/avatar/ce7f3697e231df38b3ca6065848520da?s=80">
               </q-avatar>
+            </template>
+            <template v-slot:bottom>
+              <div class="character-counter-container">
+                <div class="character-counter" :class="counterColorClass">
+                  <span class="counter-text">{{ characterCount }}/280</span>
+                  <q-linear-progress
+                    :value="characterCount / 280"
+                    :color="counterColor"
+                    class="counter-progress"
+                  />
+                </div>
+              </div>
             </template>
           </q-input>
         </div>
@@ -130,6 +141,29 @@ export default {
       ]
     }
   },
+  computed: {
+    characterCount() {
+      return this.newQweetContent.length
+    },
+    counterColor() {
+      if (this.characterCount < 200) {
+        return 'positive'
+      } else if (this.characterCount < 250) {
+        return 'warning'
+      } else {
+        return 'negative'
+      }
+    },
+    counterColorClass() {
+      if (this.characterCount < 200) {
+        return 'counter-green'
+      } else if (this.characterCount < 250) {
+        return 'counter-orange'
+      } else {
+        return 'counter-red'
+      }
+    }
+  },
   methods: {
     addNewQweet() {
       let newQweet = {
@@ -195,19 +229,55 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang=\"sass\">
 .new-qweet
   textarea
     font-size: 19px
     line-height: 1.4 !important
+
+.character-counter-container
+  display: flex
+  justify-content: flex-end
+  padding: 12px 0
+  width: 100%
+
+.character-counter
+  display: flex
+  flex-direction: column
+  align-items: flex-end
+  gap: 8px
+  min-width: 120px
+
+.counter-text
+  font-size: 18px
+  font-weight: 600
+  transition: color 0.2s ease
+
+.counter-green .counter-text
+  color: #21ba45
+
+.counter-orange .counter-text
+  color: #f2711c
+
+.counter-red .counter-text
+  color: #db2828
+
+.counter-progress
+  width: 100%
+  height: 4px
+  border-radius: 2px
+
 .divider
   border-top: 1px solid
   border-bottom: 1px solid
   border-color: $grey-4
+
 .qweet:not(:first-child)
   border-top: 1px solid rgba(0, 0, 0, 0.12)
+
 .qweet-content
   white-space: pre-line
+
 .qweet-icons
   margin-left: -5px
 </style>
