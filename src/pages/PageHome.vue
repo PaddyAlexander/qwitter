@@ -1,6 +1,19 @@
 <template>
   <q-page class="relative-position">
     <q-scroll-area class="absolute full-width full-height">
+      <div class="q-py-lg q-px-md">
+        <q-input
+          v-model="searchQuery"
+          class="search-input q-mb-md"
+          placeholder="Search qweets..."
+          dense
+          outlined
+        >
+          <template v-slot:prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
       <div class="q-py-lg q-px-md row items-end q-col-gutter-md">
         <div class="col">
           <q-input
@@ -57,7 +70,7 @@
           leave-active-class="animated fadeOut slow"
         >
           <q-item
-            v-for="qweet in qweets"
+            v-for="qweet in filteredQweets"
             :key="qweet.id"
             class="qweet q-py-md"
           >
@@ -125,6 +138,7 @@ export default {
   data() {
     return {
       newQweetContent: '',
+      searchQuery: '',
       qweets: [
         // {
         //   id: 'ID1',
@@ -162,6 +176,15 @@ export default {
       } else {
         return 'counter-red'
       }
+    },
+    filteredQweets() {
+      if (!this.searchQuery) {
+        return this.qweets
+      }
+      const query = this.searchQuery.toLowerCase()
+      return this.qweets.filter(qweet => 
+        qweet.content.toLowerCase().includes(query)
+      )
     }
   },
   methods: {
@@ -229,7 +252,7 @@ export default {
 }
 </script>
 
-<style lang=\"sass\">
+<style lang="sass">
 .new-qweet
   textarea
     font-size: 19px
