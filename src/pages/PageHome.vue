@@ -249,7 +249,7 @@ export default {
   min-width: 120px
 
 .counter-text
-  font-size: 18px
+  font-size: 32px
   font-weight: 600
   transition: color 0.2s ease
 
