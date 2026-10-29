@@ -1,0 +1,23 @@
+name: Branch name
+
+on:
+  pull_request:
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Branch name must start with "qwitter"
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          if [ "$BRANCH" = "main" ]; then
+            exit 0
+          fi
+          case "$BRANCH" in
+            qwitter*) echo "Branch name OK: $BRANCH" ;;
+            *)
+              echo "Branch '$BRANCH' is invalid: branch names must start with 'qwitter' (e.g. qwitter/add-search)."
+              exit 1
+              ;;
+          esac
