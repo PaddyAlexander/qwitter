@@ -1,4 +1,6 @@
-# Qwitter (qwitter)
+# Qwitter
+
+Development changes should be reviewed in a pull request.
 
 A Cross-Platrom Twitter Clone created with Quasar Framework, VueJS & Firebase
 
