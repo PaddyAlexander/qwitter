@@ -103,4 +103,4 @@ quasar dev -m cordova -T android
 quasar build -m cordova -T android
 ```
 
-PR75 loading-state validation verified.
+PR75 loading-state validation complete.
