@@ -10,6 +10,7 @@
             maxlength="280"
             bottom-slots
             autogrow
+            @keydown="onComposerKeydown"
           >
             <template v-slot:before>
               <q-avatar size="xl">
@@ -33,7 +34,7 @@
         <div class="col col-shrink">
           <q-btn
             @click="addNewQweet"
-            :disable="!newQweetContent"
+            :disable="!canPost"
             class="q-mb-lg"
             color="primary"
             label="Qweet"
@@ -49,6 +50,15 @@
         color="grey-2"
         size="10px"
       />
+
+      <div
+        v-if="loaded && !qweets.length"
+        class="empty-state text-center text-grey-7 q-pa-xl"
+      >
+        <q-icon name="far fa-comment" size="48px" class="q-mb-md" />
+        <div class="text-h6">No qweets yet</div>
+        <div>Be the first to post something above.</div>
+      </div>
 
       <q-list separator>
         <transition-group
@@ -125,6 +135,7 @@ export default {
   data() {
     return {
       newQweetContent: '',
+      loaded: false,
       qweets: [
         // {
         //   id: 'ID1',
@@ -144,6 +155,9 @@ export default {
   computed: {
     characterCount() {
       return this.newQweetContent.length
+    },
+    canPost() {
+      return this.newQweetContent.trim().length > 0
     },
     counterColor() {
       if (this.characterCount < 200) {
@@ -165,37 +179,65 @@ export default {
     }
   },
   methods: {
+    notifyError(message, error) {
+      console.error(message, error)
+      this.$q.notify({
+        type: 'negative',
+        message,
+        caption: error && error.message ? error.message : undefined
+      })
+    },
+    onComposerKeydown(event) {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault()
+        this.addNewQweet()
+      }
+    },
     addNewQweet() {
+      const content = this.newQweetContent.trim()
+      if (!content) {
+        return
+      }
       let newQweet = {
-        content: this.newQweetContent,
+        content,
         date: Date.now(),
         liked: false
       }
-      // this.qweets.unshift(newQweet)
-      db.collection('qweets').add(newQweet).then(function(docRef) {
-        console.log('Document written with ID: ', docRef.id)
-      }).catch(function(error) {
-        console.error('Error adding document: ', error)
-      })
       this.newQweetContent = ''
+      db.collection('qweets').add(newQweet).then(docRef => {
+        console.log('Document written with ID: ', docRef.id)
+      }).catch(error => {
+        // Put the text back (unless the user already started a new qweet) so nothing is lost.
+        if (!this.newQweetContent) {
+          this.newQweetContent = content
+        }
+        this.notifyError('Could not post your qweet', error)
+      })
     },
     deleteQweet(qweet) {
-      db.collection('qweets').doc(qweet.id).delete().then(function() {
-        console.log('Document successfully deleted!');
-      }).catch(function(error) {
-        console.error('Error removing document: ', error);
+      this.$q.dialog({
+        title: 'Delete this qweet?',
+        message: 'This cannot be undone.',
+        persistent: true,
+        ok: { label: 'Delete', color: 'negative', flat: true, noCaps: true },
+        cancel: { label: 'Cancel', flat: true, noCaps: true }
+      }).onOk(() => {
+        db.collection('qweets').doc(qweet.id).delete().then(() => {
+          console.log('Document successfully deleted!')
+        }).catch(error => {
+          this.notifyError('Could not delete the qweet', error)
+        })
       })
     },
     toggleLiked(qweet) {
       db.collection('qweets').doc(qweet.id).update({
         liked: !qweet.liked
       })
-      .then(function() {
+      .then(() => {
         console.log('Document successfully updated!')
       })
-      .catch(function(error) {
-        // The document probably doesn't exist.
-        console.error('Error updating document: ', error)
+      .catch(error => {
+        this.notifyError('Could not update the like', error)
       })
     }
   },
@@ -224,6 +266,10 @@ export default {
           this.qweets.splice(index, 1)
         }
       })
+      this.loaded = true
+    }, error => {
+      this.loaded = true
+      this.notifyError('Could not load qweets', error)
     })
   }
 }
