@@ -1,6 +1,8 @@
-# Qwitter (qwitter)
+# Qwitter
 
 A Cross-Platrom Twitter Clone created with Quasar Framework, VueJS & Firebase
+
+Review changes in a pull request before merging.
 
 ## Contributing
 - Every branch other than `main` must have a name starting with `qwitter` (e.g. `qwitter/add-search`).
