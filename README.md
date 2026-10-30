@@ -102,3 +102,5 @@ quasar dev -m cordova -T android
 ```bash
 quasar build -m cordova -T android
 ```
+
+Documentation smoke-test marker: auto-fix-live-20261030.
