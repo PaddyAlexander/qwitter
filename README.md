@@ -5,6 +5,7 @@ A Cross-Platrom Twitter Clone created with Quasar Framework, VueJS & Firebase
 ## Contributing
 - Every branch other than `main` must have a name starting with `qwitter` (e.g. `qwitter/add-search`).
   This is checked on pull requests by `.github/workflows/branch-name.yml`.
+- A pull request from a branch that doesn't follow this rule fails the "Branch name" check.
 
 ## Setup Firebase
 - Create a new Firebase project named Qwitter
