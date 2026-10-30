@@ -102,3 +102,5 @@ quasar dev -m cordova -T android
 ```bash
 quasar build -m cordova -T android
 ```
+
+Forge failing-checks smoke test 2026-10-30.
