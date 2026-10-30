@@ -104,3 +104,4 @@ quasar build -m cordova -T android
 ```
 
 Documentation smoke-test marker: auto-fix-live-20261030.
+Documentation smoke-test marker: auto-fix-cap-second-head.
